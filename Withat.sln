@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Withat", "Withat\Withat.csproj", "{109AD7BE-C2ED-4000-B0C4-8C03EFE09962}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Withat.Sample", "Withat.Sample\Withat.Sample.csproj", "{2A837413-E3D0-44AD-B46B-6F8569DFDEC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Withat.Tests", "Withat.Tests\Withat.Tests.csproj", "{FB87092F-B1E9-484B-AB8F-4D38E97D2B46}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{109AD7BE-C2ED-4000-B0C4-8C03EFE09962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{109AD7BE-C2ED-4000-B0C4-8C03EFE09962}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{109AD7BE-C2ED-4000-B0C4-8C03EFE09962}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{109AD7BE-C2ED-4000-B0C4-8C03EFE09962}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A837413-E3D0-44AD-B46B-6F8569DFDEC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A837413-E3D0-44AD-B46B-6F8569DFDEC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A837413-E3D0-44AD-B46B-6F8569DFDEC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A837413-E3D0-44AD-B46B-6F8569DFDEC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB87092F-B1E9-484B-AB8F-4D38E97D2B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB87092F-B1E9-484B-AB8F-4D38E97D2B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB87092F-B1E9-484B-AB8F-4D38E97D2B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB87092F-B1E9-484B-AB8F-4D38E97D2B46}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
