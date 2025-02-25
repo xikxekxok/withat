@@ -2,7 +2,6 @@
 
 internal static class ImmutableCollectionsWithExtensions
 {
-    
     public static string GenerateSourceCode()
     {
         return DictExtensionsSourceCode
@@ -25,6 +24,16 @@ using System.Linq;
 namespace Withat;
 internal static class ImmutableCollectionsWithExtensions
 {
+    ///<summary>
+    /// Updates the value associated with the specified key in an <see cref=""ImmutableDictionary{TKey, TValue}""/> 
+    /// using a transformation function. Throws a <see cref=""KeyNotFoundException""/> if the key does not exist.
+    ///</summary>
+    ///<param name=""dictionary"">The original immutable dictionary to update.</param>
+    ///<param name=""key"">The key whose value needs to be updated.</param>
+    ///<param name=""valueFunc"">A function that takes the existing value and returns the new value.</param>
+    ///<param name=""dictName"">The name of the dictionary parameter (automatically populated by compiler).</param>
+    ///<returns>A new immutable dictionary with the updated value for the specified key.</returns>
+    ///<exception cref=""KeyNotFoundException"">Thrown when the specified key does not exist in the dictionary.</exception>
     public static ImmutableDictionary<TKey, TValue> With<TKey, TValue>(
         this ImmutableDictionary<TKey, TValue> dictionary, 
         TKey key, 
@@ -41,7 +50,16 @@ internal static class ImmutableCollectionsWithExtensions
         return dictionary.SetItem(key, valueFunc(existing));
     }
     
-    
+    ///<summary>
+    /// Updates the value associated with the specified key in an <see cref=""IImmutableDictionary{TKey, TValue}""/> 
+    /// using a transformation function. Throws a <see cref=""KeyNotFoundException""/> if the key does not exist.
+    ///</summary>
+    ///<param name=""dictionary"">The original immutable dictionary to update.</param>
+    ///<param name=""key"">The key whose value needs to be updated.</param>
+    ///<param name=""valueFunc"">A function that takes the existing value and returns the new value.</param>
+    ///<param name=""dictName"">The name of the dictionary parameter (automatically populated by compiler).</param>
+    ///<returns>A new immutable dictionary with the updated value for the specified key.</returns>
+    ///<exception cref=""KeyNotFoundException"">Thrown when the specified key does not exist in the dictionary.</exception>
     public static IImmutableDictionary<TKey, TValue> With<TKey, TValue>(
         this IImmutableDictionary<TKey, TValue> dictionary, 
         TKey key, 
@@ -58,6 +76,16 @@ internal static class ImmutableCollectionsWithExtensions
         return dictionary.SetItem(key, valueFunc(existing));
     }
 
+    ///<summary>
+    /// Asynchronously updates the value associated with the specified key in an <see cref=""ImmutableDictionary{TKey, TValue}""/> 
+    /// using an asynchronous transformation function. Throws a <see cref=""KeyNotFoundException""/> if the key does not exist.
+    ///</summary>
+    ///<param name=""dictionary"">The original immutable dictionary to update.</param>
+    ///<param name=""key"">The key whose value needs to be updated.</param>
+    ///<param name=""valueFuncTask"">An asynchronous function that takes the existing value and returns the new value.</param>
+    ///<param name=""dictName"">The name of the dictionary parameter (automatically populated by compiler).</param>
+    ///<returns>A task representing the asynchronous operation, containing the new immutable dictionary with the updated value.</returns>
+    ///<exception cref=""KeyNotFoundException"">Thrown when the specified key does not exist in the dictionary.</exception>
     public static async Task<ImmutableDictionary<TKey, TValue>> With<TKey, TValue>(
         this ImmutableDictionary<TKey, TValue> dictionary, 
         TKey key, 
@@ -74,7 +102,16 @@ internal static class ImmutableCollectionsWithExtensions
         return dictionary.SetItem(key, await valueFuncTask(existing));
     }
     
-    
+    ///<summary>
+    /// Asynchronously updates the value associated with the specified key in an <see cref=""IImmutableDictionary{TKey, TValue}""/> 
+    /// using an asynchronous transformation function. Throws a <see cref=""KeyNotFoundException""/> if the key does not exist.
+    ///</summary>
+    ///<param name=""dictionary"">The original immutable dictionary to update.</param>
+    ///<param name=""key"">The key whose value needs to be updated.</param>
+    ///<param name=""valueFuncTask"">An asynchronous function that takes the existing value and returns the new value.</param>
+    ///<param name=""dictName"">The name of the dictionary parameter (automatically populated by compiler).</param>
+    ///<returns>A task representing the asynchronous operation, containing the new immutable dictionary with the updated value.</returns>
+    ///<exception cref=""KeyNotFoundException"">Thrown when the specified key does not exist in the dictionary.</exception>
     public static async Task<IImmutableDictionary<TKey, TValue>> With<TKey, TValue>(
         this IImmutableDictionary<TKey, TValue> dictionary, 
         TKey key, 
@@ -100,80 +137,173 @@ internal static class ImmutableCollectionsWithExtensions
     private static string GenerateListExtensions(string collectionType, string countProperty)
         {
             var s_tmp = $@"
+    ///<summary>
+    /// Updates the element at the specified index in an <see cref=""{collectionType}{{T}}""/> 
+    /// using a transformation function.
+    ///</summary>
+    ///<typeparam name=""TValue"">The type of elements in the {collectionType}.</typeparam>
+    ///<param name=""collection"">The original {collectionType} to update.</param>
+    ///<param name=""index"">The zero-based index of the element to update.</param>
+    ///<param name=""valueFunc"">A function that takes the existing value and returns the new value.</param>
+    ///<param name=""collectionName"">The name of the {collectionType} parameter (automatically populated by compiler).</param>
+    ///<returns>A new {collectionType} with the updated value at the specified index.</returns>
+    ///<exception cref=""IndexOutOfRangeException"">
+    /// Thrown when the specified index is greater than or equal to the length of the {collectionType} .
+    ///</exception>
+    ///<remarks>
+    /// This method creates a new <see cref=""{collectionType}{{T}}""/>  with the element at the specified index 
+    /// replaced by the result of applying the transformation function to the existing value.
+    /// The original {collectionType} remains unchanged.
+    ///</remarks>
     public static {collectionType}<TValue> With<TValue>(
-        this {collectionType}<TValue> array, 
+        this {collectionType}<TValue> collection, 
         int index, 
         Func<TValue, TValue> valueFunc, 
-        [CallerArgumentExpression(nameof(array))] string arrayName = """"
+        [CallerArgumentExpression(nameof(collection))] string collectionName = """"
     )
     {{
-        if (index >= array.{countProperty})
+        //firstrow
+        if (index >= collection.{countProperty})
         {{
-            throw new IndexOutOfRangeException($""The index {{index}} is greater than the length of '{{arrayName}}' ({{arrayName}}.length is {{array.{countProperty}}})!"");
+            throw new IndexOutOfRangeException($""The index {{index}} is greater than the length of '{{collectionName}}' ({{collectionName}}.length is {{collection.{countProperty}}})!"");
         }}
 
-        return array.SetItem(index, valueFunc(array[index]));
+        return collection.SetItem(index, valueFunc(collection[index]));
     }}
 
+    ///<summary>
+    /// Updates the first element in an <see cref=""{collectionType}{{T}}""/> that matches the specified filter 
+    /// using a transformation function. Throws an <see cref=""InvalidOperationException""/> if no matching element is found.
+    ///</summary>
+    ///<typeparam name=""TValue"">The type of elements in the {collectionType}.</typeparam>
+    ///<param name=""collection"">The original {collectionType} to update.</param>
+    ///<param name=""filter"">A function to test each element for a condition.</param>
+    ///<param name=""valueFunc"">A function that takes the existing value and returns the new value.</param>
+    ///<param name=""collectionName"">The name of the {collectionType} parameter (automatically populated by compiler).</param>
+    ///<param name=""filterName"">The name of the filter parameter (automatically populated by compiler).</param>
+    ///<returns>A new {collectionType} with the updated value for the first matching element.</returns>
+    ///<exception cref=""InvalidOperationException"">
+    /// Thrown when no element in the {collectionType} satisfies the specified filter condition.
+    ///</exception>
+    ///<remarks>
+    /// This method iterates through the elements of the {collectionType} to find the first element 
+    /// that matches the filter. If a match is found, it creates a new {collectionType} with the matched 
+    /// element replaced by the result of applying the transformation function. If no match is found, 
+    /// an exception is thrown. The original array remains unchanged.
+    ///</remarks>
     public static {collectionType}<TValue> WithFirst<TValue>(
-        this {collectionType}<TValue> array, 
+        this {collectionType}<TValue> collection, 
         Func<TValue, bool> filter, 
         Func<TValue, TValue> valueFunc, 
-        [CallerArgumentExpression(nameof(array))] string arrayName = """", 
+        [CallerArgumentExpression(nameof(collection))] string collectionName = """", 
         [CallerArgumentExpression(nameof(filter))] string filterName = """"
     )
     {{
-        for (int i = 0; i < array.{countProperty}; i++)
+        //firstrow
+        for (int i = 0; i < collection.{countProperty}; i++)
         {{
-            if (filter(array[i]))
+            if (filter(collection[i]))
             {{
-                return array.SetItem(i, valueFunc(array[i]));
+                return collection.SetItem(i, valueFunc(collection[i]));
             }}
         }}
-        throw new InvalidOperationException($""No item for filter '{{filterName}}' found in '{{arrayName}}'!"");
+        throw new InvalidOperationException($""No item for filter '{{filterName}}' found in '{{collectionName}}'!"");
     }}
 
+    ///<summary>
+    /// Updates the first element in an <see cref=""{collectionType}{{T}}""/> that matches the specified filter 
+    /// using a transformation function. If no matching element is found, the original {collectionType} is returned unchanged.
+    ///</summary>
+    ///<typeparam name=""TValue"">The type of elements in the {collectionType}.</typeparam>
+    ///<param name=""collection"">The original {collectionType} to update.</param>
+    ///<param name=""filter"">A function to test each element for a condition.</param>
+    ///<param name=""valueFunc"">A function that takes the existing value and returns the new value.</param>
+    ///<returns>
+    /// A new {collectionType} with the updated value for the first matching element, 
+    /// or the original {collectionType} if no matching element is found.
+    ///</returns>
+    ///<remarks>
+    /// This method iterates through the elements of the {collectionType} to find the first element 
+    /// that matches the filter. If a match is found, it creates a new {collectionType} with the matched 
+    /// element replaced by the result of applying the transformation function. If no match is found, 
+    /// the original {collectionType} is returned without modification.
+    ///</remarks>
     public static {collectionType}<TValue> WithFirstOrDefault<TValue>(
-        this {collectionType}<TValue> array, 
+        this {collectionType}<TValue> collection, 
         Func<TValue, bool> filter, 
         Func<TValue, TValue> valueFunc
     )
     {{
-        for (int i = 0; i < array.{countProperty}; i++)
+        //firstrow
+        for (int i = 0; i < collection.{countProperty}; i++)
         {{
-            if (filter(array[i]))
+            if (filter(collection[i]))
             {{
-                return array.SetItem(i, valueFunc(array[i]));
+                return collection.SetItem(i, valueFunc(collection[i]));
             }}
         }}
 
-        return array;
+        return collection;
     }}
 
+    /// <summary>
+    /// Updates all elements in an <see cref=""{collectionType}{{T}}""/> that match the specified filter using a transformation function.
+    /// </summary>
+    /// <typeparam name=""TValue"">The type of elements in the {collectionType}.</typeparam>
+    /// <param name=""collection"">The original {collectionType} to update.</param>
+    /// <param name=""filter"">A function to test each element for a condition.</param>
+    /// <param name=""valueFunc"">A function that takes the existing value and returns the new value.</param>
+    /// <returns>A new {collectionType} with updated values for all matching elements, or the original array if no matches are found.</returns>
+    /// <remarks>
+    /// This method creates a new {collectionType} with all elements that match the filter replaced by the result of applying the transformation function.
+    /// If no elements match the filter, the original array is returned unchanged.
+    /// </remarks>
     public static {collectionType}<TValue> WithAll<TValue>(
-        this {collectionType}<TValue> array, 
+        this {collectionType}<TValue> collection, 
         Func<TValue, bool> filter, 
         Func<TValue, TValue> valueFunc
     )
 
     {{
-        var result = new Lazy<TValue[]>(()=>array.ToArray());
-        for (int i = 0; i < array.{countProperty}; i++)
+        //firstrow
+        var result = new Lazy<TValue[]>(()=>collection.ToArray());
+        for (int i = 0; i < collection.{countProperty}; i++)
         {{
-            if (filter(array[i]))
+            if (filter(collection[i]))
             {{
-                result.Value[i] = valueFunc(array[i]);
+                result.Value[i] = valueFunc(collection[i]);
             }}
         }}
 
-        return result.IsValueCreated ? [..result.Value] : array;
+        return result.IsValueCreated ? [..result.Value] : collection;
     }}
 ";
-            return s_tmp + s_tmp
-                             .Replace($"public static {collectionType}<TValue>",
-                                 $"public static async Task<{collectionType}<TValue>>")
-                             .Replace("Func<TValue, TValue> valueFunc", "Func<TValue, Task<TValue>> valueFuncTask")
-                             .Replace("valueFunc(array", "await valueFuncTask(array");
+            return s_tmp 
+                   + s_tmp
+                         .Replace($"public static {collectionType}<TValue>", $"public static async Task<{collectionType}<TValue>>")
+                         .Replace("Func<TValue, TValue> valueFunc", "Func<TValue, Task<TValue>> valueFuncTask")
+                         .Replace("valueFunc(collection", "await valueFuncTask(collection")                       
+                         .Replace($"<param name=\"valueFunc\">A", $"<param name=\"valueFuncTask\">A task representing the asynchronous operation that provides a")
+                         .Replace($"<returns>A", $"<returns>A task representing the asynchronous operation that provides a")
+                   + s_tmp
+                       .Replace($"public static {collectionType}<TValue>", $"public static async Task<{collectionType}<TValue>>")
+                       .Replace($"this {collectionType}<TValue> collection", $"this Task<{collectionType}<TValue>> collectionTask")   
+                       .Replace($"<param name=\"collection\">The", $"<param name=\"collectionTask\">A task representing the asynchronous operation that provides the")
+                       .Replace($"[CallerArgumentExpression(nameof(collection))]", $"[CallerArgumentExpression(nameof(collectionTask))]")
+                       .Replace("//firstrow", "var collection = await collectionTask;")
+                       .Replace($"<returns>A", $"<returns>A task representing the asynchronous operation that provides a")
+                   
+                   + s_tmp
+                       .Replace($"public static {collectionType}<TValue>", $"public static async Task<{collectionType}<TValue>>")
+                       .Replace($"this {collectionType}<TValue> collection", $"this Task<{collectionType}<TValue>> collectionTask")                 
+                       .Replace($"[CallerArgumentExpression(nameof(collection))]", $"[CallerArgumentExpression(nameof(collectionTask))]")
+                       .Replace($"<param name=\"collection\">The", $"<param name=\"collectionTask\">A task representing the asynchronous operation that provides the")
+                       .Replace("//firstrow", "var collection = await collectionTask;")
+                       .Replace("Func<TValue, TValue> valueFunc", "Func<TValue, Task<TValue>> valueFuncTask")
+                       .Replace("valueFunc(collection", "await valueFuncTask(collection")  
+                       .Replace($"<param name=\"valueFunc\">", $"<param name=\"valueFuncTask\">A task representing the asynchronous operation that provides ")
+                       .Replace($"<returns>A", $"<returns>A task representing the asynchronous operation that provides a")
+                ;
 
         }
 }
