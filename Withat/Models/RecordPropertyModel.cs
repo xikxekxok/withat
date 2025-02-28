@@ -1,19 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
-namespace Withat;
+namespace Withat.Models;
 
 public record RecordPropertyModel
 {
-    public string PropertyName { get; set; }
-    public string PropertyTypeFQ { get; set; }
-    public ImmutableArray<AttributeModel> Attributes { get; set; }
-    public Accessibility SetAccessibility { get; set; }
-}
-
-public record AttributeModel
-{
-    public string AttributeName { get; set; }
-    public ImmutableDictionary<string, object> Values { get; set; }
+    public required string PropertyName { get; init; }
+    public required string PropertyTypeFQ { get; init; }
+    public required Accessibility? SetAccessibility { get; init; }
+    public required bool HasIgnoreAttribute { get; init; }
 }

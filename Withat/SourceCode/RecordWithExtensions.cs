@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.CodeAnalysis;
+using Withat.Models;
 
 namespace Withat.SourceCode;
 
@@ -21,15 +22,16 @@ public static class {type.RecordTypeNameMinified}_WithExtensions
     
     private static string PropMethods(RecordTypeModel type, RecordPropertyModel property)
     {
-        if (property.Attributes.Any(x => x.AttributeName.Equals("global::Withat.ExtendedWithIgnoreAttribute")))
-            return "";
-        if (property.SetAccessibility is not (Accessibility.Internal or Accessibility.Public))
+        if (property.HasIgnoreAttribute)
             return "";
         var methodModifier = property.SetAccessibility switch
         {
             Accessibility.Public => "public",
             Accessibility.Internal => "internal",
+            _ => null
         };
+        if (methodModifier == null)
+            return "";
         var s = $@"
     {methodModifier} static {type.RecordTypeNameFull} With{property.PropertyName}(this {type.RecordTypeNameFull} record, {property.PropertyTypeFQ} new{property.PropertyName})
     {{

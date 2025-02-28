@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Withat.Sample", "Withat.Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Withat.Tests", "Withat.Tests\Withat.Tests.csproj", "{FB87092F-B1E9-484B-AB8F-4D38E97D2B46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Withat.PackageSample", "Withat.PackageSample\Withat.PackageSample.csproj", "{C442CB11-1C2D-4F5B-B18D-CC2D0B7F5BE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{FB87092F-B1E9-484B-AB8F-4D38E97D2B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB87092F-B1E9-484B-AB8F-4D38E97D2B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB87092F-B1E9-484B-AB8F-4D38E97D2B46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C442CB11-1C2D-4F5B-B18D-CC2D0B7F5BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C442CB11-1C2D-4F5B-B18D-CC2D0B7F5BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C442CB11-1C2D-4F5B-B18D-CC2D0B7F5BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C442CB11-1C2D-4F5B-B18D-CC2D0B7F5BE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

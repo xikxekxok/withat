@@ -1,11 +1,11 @@
 ﻿using System.Collections.Immutable;
 
-namespace Withat;
+namespace Withat.Models;
 
 public record RecordTypeModel
 {
-    public string RecordTypeNameMinified { get; set; }
-    public string RecordTypeNameFull { get; set; }
-    public string RecordNamespaceName { get; set; }
-    public ImmutableArray<RecordPropertyModel> Properties { get; set; }
+    public required string RecordTypeNameMinified { get; init; }
+    public required string RecordTypeNameFull { get; init; }
+    public required string RecordNamespaceName { get; init; }
+    public required ImmutableArray<RecordPropertyModel> Properties { get; init; }
 }

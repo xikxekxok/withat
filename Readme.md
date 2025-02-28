@@ -25,6 +25,7 @@ public record Person(string Name, int Age);
 // Create and update instances
 var person = new Person("Alice", 30);
 var updatedPerson = person.WithName("Bob"); // Creates a new Person with Name = "Bob"
+var updatedPerson2 = person.WithAge(x=>x*2); // Creates a new Person with Age = 60
 ```
 
 ### Async Support
@@ -82,7 +83,7 @@ var list = ImmutableList.Create(1, 2, 3);
 var updatedList = list.With(index: 1, valueFunc: x => x * 2); // [1, 4, 3]
 
 // Update first element greater than 1
-var updatedList2 = list.WithFirst(x => x > 1, x => x * 2); // [1, 4, 3]
+var updatedList2 = list.WithFirstOrDefault(x => x > 1, x => x * 2); // [1, 4, 3]
 
 // Update all elements greater than 1
 var updatedList3 = list.WithAll(x => x > 1, x => x * 2); // [1, 4, 6]
@@ -118,7 +119,7 @@ We welcome contributions from the community! Here's how you can help:
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ---
 

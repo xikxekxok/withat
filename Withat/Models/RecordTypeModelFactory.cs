@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace Withat;
+namespace Withat.Models;
 
 internal static class RecordTypeModelFactory
 {
@@ -25,12 +25,10 @@ internal static class RecordTypeModelFactory
             {
                 PropertyName = propSymbol.Name,
                 PropertyTypeFQ = propSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                SetAccessibility = propSymbol.SetMethod.DeclaredAccessibility,
-                Attributes = propSymbol.GetAttributes().Select(x=>new AttributeModel
-                {
-                    AttributeName = x.AttributeClass.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                    Values = x.NamedArguments.ToImmutableDictionary(y => y.Key, y => y.Value.Value),
-                }).ToImmutableArray()
+                SetAccessibility = propSymbol.SetMethod?.DeclaredAccessibility,
+                HasIgnoreAttribute = propSymbol.GetAttributes()
+                    .Any(x=>x.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Equals("global::Withat.ExtendedWithIgnoreAttribute") == true),
+
             });
         }
         

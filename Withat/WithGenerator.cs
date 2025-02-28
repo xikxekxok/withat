@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Withat.Models;
 using Withat.SourceCode;
 
 namespace Withat;
@@ -23,7 +24,7 @@ public class WithGenerator : IIncrementalGenerator
             .ForAttributeWithMetadataName(
                 "Withat.ExtendedWithAttribute", 
                 (node, _) => node is RecordDeclarationSyntax,
-            (c, token) => RecordTypeModelFactory.Generate(c)
+            (c, token) => RecordTypeModelFactory.Generate(c)!
             )
             .Where(x=>x!=null);
         
