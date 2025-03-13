@@ -44,7 +44,7 @@ internal static class ImmutableCollectionsWithExtensions
     {
         if (!dictionary.TryGetValue(key, out var existing))
         {
-            throw new KeyNotFoundException($""No value for key '{key}' in '{dictName}'!"");
+            throw new System.Collections.Generic.KeyNotFoundException($""No value for key '{key}' in '{dictName}'!"");
         }
 
         return dictionary.SetItem(key, valueFunc(existing));
@@ -70,7 +70,7 @@ internal static class ImmutableCollectionsWithExtensions
     {
         if (!dictionary.TryGetValue(key, out var existing))
         {
-            throw new KeyNotFoundException($""No value for key '{key}' in '{dictName}'!"");
+            throw new System.Collections.Generic.KeyNotFoundException($""No value for key '{key}' in '{dictName}'!"");
         }
 
         return dictionary.SetItem(key, valueFunc(existing));
@@ -96,7 +96,7 @@ internal static class ImmutableCollectionsWithExtensions
     {
         if (!dictionary.TryGetValue(key, out var existing))
         {
-            throw new KeyNotFoundException($""No value for key '{key}' in '{dictName}'!"");
+            throw new System.Collections.Generic.KeyNotFoundException($""No value for key '{key}' in '{dictName}'!"");
         }
 
         return dictionary.SetItem(key, await valueFuncTask(existing));
@@ -122,7 +122,7 @@ internal static class ImmutableCollectionsWithExtensions
     {
         if (!dictionary.TryGetValue(key, out var existing))
         {
-            throw new KeyNotFoundException($""No value for key '{key}' in '{dictName}'!"");
+            throw new System.Collections.Generic.KeyNotFoundException($""No value for key '{key}' in '{dictName}'!"");
         }
 
         return dictionary.SetItem(key, await valueFuncTask(existing));
