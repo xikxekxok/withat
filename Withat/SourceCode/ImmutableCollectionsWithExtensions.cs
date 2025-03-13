@@ -5,9 +5,9 @@ internal static class ImmutableCollectionsWithExtensions
     public static string GenerateSourceCode()
     {
         return DictExtensionsSourceCode
-               + GenerateListExtensions("ImmutableArray", "Length")
-               + GenerateListExtensions("ImmutableList", "Count")
-               + GenerateListExtensions("IImmutableList", "Count")
+               + GenerateListExtensions("ImmutableArray", "Length", "ImmutableArray.Create({0})")
+               + GenerateListExtensions("ImmutableList", "Count", "ImmutableList.Create({0})")
+               + GenerateListExtensions("IImmutableList", "Count", "ImmutableList.Create({0})")
                + "}";
     } 
     
@@ -134,7 +134,7 @@ internal static class ImmutableCollectionsWithExtensions
     
     
     
-    private static string GenerateListExtensions(string collectionType, string countProperty)
+    private static string GenerateListExtensions(string collectionType, string countProperty, string factoryFromIEnumerable)
         {
             var s_tmp = $@"
     ///<summary>
@@ -275,7 +275,7 @@ internal static class ImmutableCollectionsWithExtensions
             }}
         }}
 
-        return result.IsValueCreated ? [..result.Value] : collection;
+        return result.IsValueCreated ? {string.Format(factoryFromIEnumerable, "result.Value")} : collection;
     }}
 ";
             return s_tmp 
