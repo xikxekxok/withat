@@ -9,4 +9,8 @@ public record RecordPropertyModel
     public required string PropertyTypeFQ { get; init; }
     public required Accessibility? SetAccessibility { get; init; }
     public required bool HasIgnoreAttribute { get; init; }
+    public required bool HasNoNestedWithAttribute { get; init; }
+    public required bool IsRecord { get; init; }
+    public required bool IsNullable { get; init; }
+    public required ImmutableArray<RecordPropertyModel> NestedProperties { get; init; }
 }

@@ -13,6 +13,9 @@ public class ExtendedWithAttribute : Attribute {}
 
 [AttributeUsage(AttributeTargets.Property)]
 public class ExtendedWithIgnoreAttribute : Attribute {}
+
+[AttributeUsage(AttributeTargets.Property)]
+public class NoNestedWithAttribute : Attribute {}
 ";
 }
 
