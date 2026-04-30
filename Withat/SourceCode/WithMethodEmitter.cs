@@ -133,7 +133,7 @@ internal sealed class WithMethodEmitter
         IReadOnlyList<PathSegment> path)
     {
         var containerIndex = path.Count - 2;
-        yield return $"var u{containerIndex+1} = __assigned";
+        yield return $"var u{containerIndex+1} = __assigned;";
 
         for (var i = containerIndex; i >= 0; i--)
         {
