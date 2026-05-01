@@ -28,6 +28,31 @@ var updatedPerson = person.WithName("Bob"); // Creates a new Person with Name = 
 var updatedPerson2 = person.WithAge(x=>x*2); // Creates a new Person with Age = 60
 ```
 
+### Nested `With` Paths for record properties
+If a record marked with `[ExtendedWith]` has properties whose types are also `record`, **Withat** generates additional *nested* extension methods using `_` to represent the path.
+
+#### Example:
+```csharp
+[ExtendedWith]
+public record Order
+{
+    public required Address Address { get; init; }
+}
+
+public record Address
+{
+    public required string City { get; init; }
+}
+
+var order = new Order { Address = new Address { City = "A" } };
+var updated = order.WithAddress_City("B");
+```
+
+#### Nullable path semantics
+If any record-segment on the path is nullable (`SomeRecord?`), Withat generates **two variants**:
+- `TryWith_<path>(...)`: null propagation — if `null` is encountered on the path, returns the original object unchanged
+- `With_<path>_OrThrow(...)`: throw semantics — if `null` is encountered on the path, throws an NRE
+
 ### Async Support
 All `With` methods have asynchronous variants, making it easy to integrate with async workflows.
 
@@ -55,6 +80,9 @@ public record Person
     public required int Age {get; init;} // This property will not have a `With` method
 );
 ```
+
+You can also disable **nested** `With` path generation for a specific property by applying `[NoNestedWith]`.
+This will still generate the top-level `With<Property>` method for that property; it only blocks nested paths through it.
 
 ### Immutable Collection Extensions
 **Withat** extends immutable collections such as `ImmutableArray`, `ImmutableList`, and `ImmutableDictionary` with methods like `With`, `WithFirst`, `WithFirstOrDefault`, `WithAll`, and more. These methods make it easy to update elements within immutable collections.

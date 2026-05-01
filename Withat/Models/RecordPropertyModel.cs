@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 
 namespace Withat.Models;
 
@@ -9,4 +8,8 @@ public record RecordPropertyModel
     public required string PropertyTypeFQ { get; init; }
     public required Accessibility? SetAccessibility { get; init; }
     public required bool HasIgnoreAttribute { get; init; }
+    public required bool HasNoNestedWithAttribute { get; init; }
+    public required bool IsRecord { get; init; }
+    public required bool IsNullable { get; init; }
+    public required EquatableArray<RecordPropertyModel> NestedProperties { get; init; }
 }

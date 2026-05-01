@@ -1,5 +1,6 @@
-﻿using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Withat.Models;
 
 namespace Withat.SourceCode;
@@ -14,70 +15,44 @@ using System.Collections.Generic;
 namespace {type.RecordNamespaceName};
 public static class {type.RecordTypeNameMinified}_WithExtensions
 {{
-    {string.Join("", type.Properties.Select(x=>PropMethods(type,x)))}
+    {GenerateAllPathMethods(type)}
 }}
 ";
-    
-    
-    
-    private static string PropMethods(RecordTypeModel type, RecordPropertyModel property)
+
+    private static string GenerateAllPathMethods(RecordTypeModel type)
     {
-        if (property.HasIgnoreAttribute)
-            return "";
-        var methodModifier = property.SetAccessibility switch
+        var plannedPaths = WithPathPlanner.Plan(type).ToArray();
+
+        ValidateNoDuplicatePlannedPaths(plannedPaths);
+
+        var sb = new System.Text.StringBuilder();
+        var emitter = new WithMethodEmitter();
+
+        foreach (var plan in plannedPaths)
         {
-            Accessibility.Public => "public",
-            Accessibility.Internal => "internal",
-            _ => null
-        };
-        if (methodModifier == null)
-            return "";
-        var s = $@"
-    {methodModifier} static {type.RecordTypeNameFull} With{property.PropertyName}(this {type.RecordTypeNameFull} record, {property.PropertyTypeFQ} new{property.PropertyName})
-    {{
-        return record with {{ {property.PropertyName} = new{property.PropertyName} }};
-    }}
+            if (!plan.HasNullableRecordSegment)
+            {
+                emitter.EmitEightOverloads(sb, type, plan, $"With{plan.PathSuffix}", NullPropagationKind.None);
+            }
+            else
+            {
+                emitter.EmitEightOverloads(sb, type, plan, $"TryWith{plan.PathSuffix}", NullPropagationKind.Safe);
+                emitter.EmitEightOverloads(sb, type, plan, $"With{plan.PathSuffix}_OrThrow", NullPropagationKind.Throw);
+            }
+        }
 
-    {methodModifier} static async Task<{type.RecordTypeNameFull}> With{property.PropertyName}(this {type.RecordTypeNameFull} record, Task<{property.PropertyTypeFQ}> new{property.PropertyName}Task)
-    {{
-        return record with {{ {property.PropertyName} = await new{property.PropertyName}Task }};
-    }}
-
-    {methodModifier} static {type.RecordTypeNameFull} With{property.PropertyName}(this {type.RecordTypeNameFull} record, Func<{property.PropertyTypeFQ},{property.PropertyTypeFQ}> new{property.PropertyName}Func)
-    {{
-        return record with {{ {property.PropertyName} = new{property.PropertyName}Func(record.{property.PropertyName}) }};
-    }}
-
-    {methodModifier} static async Task<{type.RecordTypeNameFull}> With{property.PropertyName}(this {type.RecordTypeNameFull} record, Func<{property.PropertyTypeFQ},Task<{property.PropertyTypeFQ}>> new{property.PropertyName}Func)
-    {{
-        return record with {{ {property.PropertyName} = await new{property.PropertyName}Func(record.{property.PropertyName}) }};
-    }}
-
-    {methodModifier} static async Task<{type.RecordTypeNameFull}> With{property.PropertyName}(this Task<{type.RecordTypeNameFull}> recordTask, {property.PropertyTypeFQ} new{property.PropertyName})
-    {{
-        var record = await recordTask;
-        return record with {{ {property.PropertyName} = new{property.PropertyName} }};
-    }}
-
-    {methodModifier} static async Task<{type.RecordTypeNameFull}> With{property.PropertyName}(this Task<{type.RecordTypeNameFull}> recordTask, Task<{property.PropertyTypeFQ}> new{property.PropertyName}Task)
-    {{
-        var record = await recordTask;
-        return record with {{ {property.PropertyName} = await new{property.PropertyName}Task }};
-    }}
-
-
-    {methodModifier} static async Task<{type.RecordTypeNameFull}> With{property.PropertyName}(this Task<{type.RecordTypeNameFull}> recordTask, Func<{property.PropertyTypeFQ},{property.PropertyTypeFQ}> new{property.PropertyName}Func)
-    {{
-        var record = await recordTask;
-        return record with {{ {property.PropertyName} = new{property.PropertyName}Func(record.{property.PropertyName}) }};
-    }}
-
-    {methodModifier} static async Task<{type.RecordTypeNameFull}> With{property.PropertyName}(this Task<{type.RecordTypeNameFull}> recordTask, Func<{property.PropertyTypeFQ},Task<{property.PropertyTypeFQ}>> new{property.PropertyName}Func)
-    {{
-        var record = await recordTask;
-        return record with {{ {property.PropertyName} = await new{property.PropertyName}Func(record.{property.PropertyName}) }};
-    }}
-        ";
-        return s;
+        return sb.ToString();
     }
+
+    private static void ValidateNoDuplicatePlannedPaths(IReadOnlyList<PlannedPath> plannedPaths)
+    {
+        var seen = new HashSet<string>();
+        foreach (var plan in plannedPaths)
+        {
+            if (!seen.Add(plan.PathSuffix))
+                throw new InvalidOperationException($"Withat: duplicate planned path detected: {plan.PathSuffix}");
+        }
+    }
+    
+
 }
