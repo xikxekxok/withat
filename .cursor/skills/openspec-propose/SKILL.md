@@ -9,6 +9,10 @@ metadata:
   generatedBy: "1.3.1"
 ---
 
+**Always read and apply: [openspec-general-rules](.cursor/skills/openspec-general-rules/SKILL.md)**
+
+---
+
 Propose a new change - create the change and generate all artifacts in one step.
 
 I'll create a change with artifacts:

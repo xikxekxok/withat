@@ -5,3 +5,5 @@ artifacts/
 riderModule.iml
 /_ReSharper.Caches/
 .user
+*.user
+.idea/
