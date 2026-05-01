@@ -18,66 +18,61 @@ internal static class RecordTypeModelFactory
         var typeName = typeSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
         var fullTypeName = typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
-        var properties = typeSymbol
-            .GetMembers()
-            .OfType<IPropertySymbol>()
-            .Where(x => !x.Name.Equals("EqualityContract"))
-            .Select(p => BuildPropertyModel(p, new HashSet<string>()))
-            .ToList();
-        
         return new RecordTypeModel
         {
             RecordTypeNameMinified = typeName,
             RecordTypeNameFull = fullTypeName,
             RecordNamespaceName = namespaceName,
-            Properties = properties.ToImmutableArray(),
+            Properties = BuildRecordProperties(typeSymbol, []).ToImmutableArray(),
         };
     }
 
-    private static RecordPropertyModel BuildPropertyModel(IPropertySymbol propSymbol, HashSet<string> visitedRecordTypes)
+    private static IEnumerable<RecordPropertyModel> BuildRecordProperties(ITypeSymbol typeSymbol, HashSet<string> visitedRecordTypes)
     {
-        var type = propSymbol.Type;
-        var (unwrappedType, isNullable) = UnwrapNullable(type);
-        var isRecord = unwrappedType is INamedTypeSymbol nts && nts.IsRecord;
-
-        var hasIgnoreAttribute = propSymbol.GetAttributes()
-            .Any(x =>
-                x.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
-                    .Equals("global::Withat.ExtendedWithIgnoreAttribute") == true);
-
-        var hasNoNestedWithAttribute = propSymbol.GetAttributes()
-            .Any(x =>
-                x.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
-                    .Equals("global::Withat.NoNestedWithAttribute") == true);
-
-        ImmutableArray<RecordPropertyModel> nested = ImmutableArray<RecordPropertyModel>.Empty;
-        if (isRecord && unwrappedType is INamedTypeSymbol recordType)
+        var properties = typeSymbol
+            .GetMembers()
+            .OfType<IPropertySymbol>()
+            .Where(x => !x.Name.Equals("EqualityContract"));
+        foreach (var propSymbol in properties)
         {
-            // Prevent cycles by type identity string
-            var key = recordType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            if (!visitedRecordTypes.Contains(key))
+            var type = propSymbol.Type;
+            var (unwrappedType, isNullable) = UnwrapNullable(type);
+            var isRecord = unwrappedType is INamedTypeSymbol nts && nts.IsRecord;
+
+            var hasIgnoreAttribute = propSymbol.GetAttributes()
+                .Any(x =>
+                    x.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                        .Equals("global::Withat.ExtendedWithIgnoreAttribute") == true);
+
+            var hasNoNestedWithAttribute = propSymbol.GetAttributes()
+                .Any(x =>
+                    x.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                        .Equals("global::Withat.NoNestedWithAttribute") == true);
+
+            var nested = ImmutableArray<RecordPropertyModel>.Empty;
+            if (isRecord && unwrappedType is INamedTypeSymbol recordType)
             {
-                var nextVisited = new HashSet<string>(visitedRecordTypes) { key };
-                nested = recordType
-                    .GetMembers()
-                    .OfType<IPropertySymbol>()
-                    .Where(x => !x.Name.Equals("EqualityContract"))
-                    .Select(p => BuildPropertyModel(p, nextVisited))
-                    .ToImmutableArray();
+                // Prevent cycles by type identity string
+                var key = recordType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                if (!visitedRecordTypes.Contains(key))
+                {
+                    var nextVisited = new HashSet<string>(visitedRecordTypes) { key };
+                    nested = BuildRecordProperties(recordType, nextVisited).ToImmutableArray();
+                }
             }
-        }
 
-        return new RecordPropertyModel
-        {
-            PropertyName = propSymbol.Name,
-            PropertyTypeFQ = propSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-            SetAccessibility = propSymbol.SetMethod?.DeclaredAccessibility,
-            HasIgnoreAttribute = hasIgnoreAttribute,
-            HasNoNestedWithAttribute = hasNoNestedWithAttribute,
-            IsRecord = isRecord,
-            IsNullable = isNullable,
-            NestedProperties = nested,
-        };
+            yield return new RecordPropertyModel
+            {
+                PropertyName = propSymbol.Name,
+                PropertyTypeFQ = propSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                SetAccessibility = propSymbol.SetMethod?.DeclaredAccessibility,
+                HasIgnoreAttribute = hasIgnoreAttribute,
+                HasNoNestedWithAttribute = hasNoNestedWithAttribute,
+                IsRecord = isRecord,
+                IsNullable = isNullable,
+                NestedProperties = nested,
+            };
+        }
     }
 
     private static (ITypeSymbol Unwrapped, bool IsNullable) UnwrapNullable(ITypeSymbol type)

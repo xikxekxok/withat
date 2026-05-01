@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 
 namespace Withat.Models;
 
@@ -12,5 +11,5 @@ public record RecordPropertyModel
     public required bool HasNoNestedWithAttribute { get; init; }
     public required bool IsRecord { get; init; }
     public required bool IsNullable { get; init; }
-    public required ImmutableArray<RecordPropertyModel> NestedProperties { get; init; }
+    public required EquatableArray<RecordPropertyModel> NestedProperties { get; init; }
 }
